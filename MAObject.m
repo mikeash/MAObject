@@ -1,9 +1,12 @@
 
 #import "MAObject.h"
 
+#import <libkern/OSAtomic.h>
+
 
 @implementation MAObject {
     Class isa;
+    volatile int32_t retainCount;
 }
 
 - (BOOL)isEqual: (id)object
@@ -80,21 +83,26 @@
 
 - (id)retain
 {
-    return nil;
+    OSAtomicIncrement32(&retainCount);
+    return self;
 }
 
 - (oneway void)release
 {
+    uint32_t newCount = OSAtomicDecrement32(&retainCount);
+    if(newCount == 0)
+        [self dealloc];
 }
 
 - (id)autorelease
 {
+    [NSAutoreleasePool addObject: self];
     return self;
 }
 
 - (NSUInteger)retainCount
 {
-    return 0;
+    return retainCount;
 }
 
 - (NSString *)description
