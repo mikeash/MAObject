@@ -59,11 +59,7 @@
 
 - (BOOL)isKindOfClass: (Class)aClass
 {
-    for(Class candidate = isa; candidate != nil; candidate = [candidate superclass])
-        if (candidate == aClass)
-            return YES;
-    
-    return NO;
+    return [isa isSubclassOfClass: aClass];
 }
 
 - (BOOL)isMemberOfClass: (Class)aClass
@@ -192,23 +188,29 @@
     [NSException raise: NSInvalidArgumentException format: @"%s[%@ %@]: unrecognized selector sent to instance %p", methodTypeString, [[self class] description], NSStringFromSelector(aSelector), self];
 }
 
-- (id)forwardingTargetForSelector:(SEL)aSelector
+- (id)forwardingTargetForSelector: (SEL)aSelector
 {
     return nil;
 }
 
-- (void)forwardInvocation:(NSInvocation *)anInvocation
+- (void)forwardInvocation: (NSInvocation *)anInvocation
 {
+    [self doesNotRecognizeSelector: [anInvocation selector]];
 }
 
-- (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector
+- (NSMethodSignature *)methodSignatureForSelector: (SEL)aSelector
 {
-    return nil;
+    return [isa instanceMethodSignatureForSelector: aSelector];
 }
 
-+ (NSMethodSignature *)instanceMethodSignatureForSelector:(SEL)aSelector
++ (NSMethodSignature *)instanceMethodSignatureForSelector: (SEL)aSelector
 {
-    return nil;
+    Method method = class_getInstanceMethod(self, aSelector);
+    if(!method)
+        return nil;
+    
+    const char *types = method_getTypeEncoding(method);
+    return [NSMethodSignature signatureWithObjCTypes: types];
 }
 
 + (NSString *)description
@@ -216,8 +218,12 @@
     return [NSString stringWithUTF8String: class_getName(self)];
 }
 
-+ (BOOL)isSubclassOfClass:(Class)aClass
++ (BOOL)isSubclassOfClass: (Class)aClass
 {
+    for(Class candidate = self; candidate != nil; candidate = [candidate superclass])
+        if (candidate == aClass)
+            return YES;
+    
     return NO;
 }
 
