@@ -10,5 +10,7 @@ int main(int argc, char **argv)
         MAObject *obj = [[MAObject alloc] init];
         NSLog(@"%@", obj);
         [obj release];
+        
+        [[[MAObject alloc] init] copy];
     }
 }

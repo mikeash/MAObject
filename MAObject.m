@@ -59,7 +59,7 @@
 
 - (BOOL)isKindOfClass: (Class)aClass
 {
-    for(Class candidate = [self class]; candidate != nil; candidate = [candidate superclass])
+    for(Class candidate = isa; candidate != nil; candidate = [candidate superclass])
         if (candidate == aClass)
             return YES;
     
@@ -68,17 +68,17 @@
 
 - (BOOL)isMemberOfClass: (Class)aClass
 {
-    return [self class] == aClass;
+    return isa == aClass;
 }
 
 - (BOOL)conformsToProtocol: (Protocol *)aProtocol
 {
-    return class_conformsToProtocol([self class], aProtocol);
+    return class_conformsToProtocol(isa, aProtocol);
 }
 
 - (BOOL)respondsToSelector: (SEL)aSelector
 {
-    return class_respondsToSelector([self class], aSelector);
+    return class_respondsToSelector(isa, aSelector);
 }
 
 - (id)retain
@@ -137,6 +137,7 @@
 
 - (void)dealloc
 {
+    free(self);
 }
 
 - (void)finalize
@@ -145,46 +146,50 @@
 
 - (id)copy
 {
+    [self doesNotRecognizeSelector: _cmd];
     return nil;
 }
 
 - (id)mutableCopy
 {
+    [self doesNotRecognizeSelector: _cmd];
     return nil;
 }
 
 + (Class)superclass
 {
-    return nil;
+    return class_getSuperclass(self);
 }
 
 + (Class)class
 {
-    return nil;
+    return self;
 }
 
-+ (BOOL)instancesRespondToSelector:(SEL)aSelector
++ (BOOL)instancesRespondToSelector: (SEL)aSelector
 {
-    return NO;
+    return class_respondsToSelector(self, aSelector);
 }
 
-+ (BOOL)conformsToProtocol:(Protocol *)protocol
++ (BOOL)conformsToProtocol: (Protocol *)protocol
 {
-    return NO;
+    return class_conformsToProtocol(self, protocol);
 }
 
-- (IMP)methodForSelector:(SEL)aSelector
+- (IMP)methodForSelector: (SEL)aSelector
 {
-    return NULL;
+    return class_getMethodImplementation(isa, aSelector);
 }
 
-+ (IMP)instanceMethodForSelector:(SEL)aSelector
++ (IMP)instanceMethodForSelector: (SEL)aSelector
 {
-    return NULL;
+    return class_getMethodImplementation(self, aSelector);
 }
 
-- (void)doesNotRecognizeSelector:(SEL)aSelector
+- (void) doesNotRecognizeSelector: (SEL)aSelector
 {
+    char *methodTypeString = class_isMetaClass(isa) ? "+" : "-";
+    [NSException raise: NSInvalidArgumentException format: @"%s[%@ %@]: unrecognized selector sent to instance %p", methodTypeString, [[self class] description], NSStringFromSelector(aSelector), self];
 }
 
 - (id)forwardingTargetForSelector:(SEL)aSelector
