@@ -2,46 +2,51 @@
 #import "MAObject.h"
 
 
-@implementation MAObject
+@implementation MAObject {
+    Class isa;
+}
 
-- (BOOL)isEqual:(id)object
+- (BOOL)isEqual: (id)object
 {
-    return NO;
+    return self == object;
 }
 
 - (NSUInteger)hash
 {
-    return 0;
+    return (NSUInteger)self;
 }
 
 - (Class)superclass
 {
-    return nil;
+    return [[self class] superclass];
 }
 
 - (Class)class
 {
-    return nil;
+    return isa;
 }
 
 - (id)self
 {
-    return nil;
+    return self;
 }
 
-- (id)performSelector:(SEL)aSelector
+- (id)performSelector: (SEL)aSelector
 {
-    return nil;
+    IMP imp = [self methodForSelector: aSelector];
+    return ((id (*)(id, SEL))imp)(self, aSelector);
 }
 
 - (id)performSelector:(SEL)aSelector withObject:(id)object
 {
-    return nil;
+    IMP imp = [self methodForSelector: aSelector];
+    return ((id (*)(id, SEL, id))imp)(self, aSelector, object);
 }
 
 - (id)performSelector:(SEL)aSelector withObject:(id)object1 withObject:(id)object2
 {
-    return nil;
+    IMP imp = [self methodForSelector: aSelector];
+    return ((id (*)(id, SEL, id, id))imp)(self, aSelector, object1, object2);
 }
 
 - (BOOL)isProxy
@@ -103,17 +108,19 @@
 
 - (id)init
 {
-    return nil;
+    return self;
 }
 
 + (id)new
 {
-    return nil;
+    return [[self alloc] init];
 }
 
 + (id)alloc
 {
-    return nil;
+    MAObject *obj = calloc(1, class_getInstanceSize(self));
+    obj->isa = self;
+    return obj;
 }
 
 - (void)dealloc
