@@ -37,13 +37,13 @@
     return ((id (*)(id, SEL))imp)(self, aSelector);
 }
 
-- (id)performSelector:(SEL)aSelector withObject:(id)object
+- (id)performSelector: (SEL)aSelector withObject: (id)object
 {
     IMP imp = [self methodForSelector: aSelector];
     return ((id (*)(id, SEL, id))imp)(self, aSelector, object);
 }
 
-- (id)performSelector:(SEL)aSelector withObject:(id)object1 withObject:(id)object2
+- (id)performSelector: (SEL)aSelector withObject: (id)object1 withObject: (id)object2
 {
     IMP imp = [self methodForSelector: aSelector];
     return ((id (*)(id, SEL, id, id))imp)(self, aSelector, object1, object2);
@@ -54,24 +54,28 @@
     return NO;
 }
 
-- (BOOL)isKindOfClass:(Class)aClass
+- (BOOL)isKindOfClass: (Class)aClass
 {
+    for(Class candidate = [self class]; candidate != nil; candidate = [candidate superclass])
+        if (candidate == aClass)
+            return YES;
+    
     return NO;
 }
 
-- (BOOL)isMemberOfClass:(Class)aClass
+- (BOOL)isMemberOfClass: (Class)aClass
 {
-    return NO;
+    return [self class] == aClass;
 }
 
-- (BOOL)conformsToProtocol:(Protocol *)aProtocol
+- (BOOL)conformsToProtocol: (Protocol *)aProtocol
 {
-    return NO;
+    return class_conformsToProtocol([self class], aProtocol);
 }
 
-- (BOOL)respondsToSelector:(SEL)aSelector
+- (BOOL)respondsToSelector: (SEL)aSelector
 {
-    return NO;
+    return class_respondsToSelector([self class], aSelector);
 }
 
 - (id)retain
@@ -85,7 +89,7 @@
 
 - (id)autorelease
 {
-    return nil;
+    return self;
 }
 
 - (NSUInteger)retainCount
@@ -95,7 +99,7 @@
 
 - (NSString *)description
 {
-    return nil;
+    return [NSString stringWithFormat: @"<%@: %p>", [self class], self];
 }
 
 + (void)load
@@ -196,7 +200,7 @@
 
 + (NSString *)description
 {
-    return nil;
+    return [NSString stringWithUTF8String: class_getName(self)];
 }
 
 + (BOOL)isSubclassOfClass:(Class)aClass
