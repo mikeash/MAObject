@@ -128,6 +128,7 @@
 {
     MAObject *obj = calloc(1, class_getInstanceSize(self));
     obj->isa = self;
+    obj->retainCount = 1;
     return obj;
 }
 

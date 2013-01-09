@@ -3,11 +3,24 @@
 #import "MAObject.h"
 
 
+@interface TestObject : MAObject
+@end
+
+@implementation TestObject
+
+- (void)dealloc
+{
+    NSLog(@"Dealloc!");
+    [super dealloc];
+}
+
+@end
+
 int main(int argc, char **argv)
 {
     @autoreleasepool
     {
-        MAObject *obj = [[MAObject alloc] init];
+        TestObject *obj = [[TestObject alloc] init];
         NSLog(@"%@", obj);
         [obj release];
         
