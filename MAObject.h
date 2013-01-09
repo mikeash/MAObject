@@ -66,4 +66,9 @@
 + (BOOL)resolveClassMethod:(SEL)sel;
 + (BOOL)resolveInstanceMethod:(SEL)sel;
 
+- (id)valueForKey:(NSString *)key;
+- (void)setValue:(id)value forKey:(NSString *)key;
+- (id)valueForKeyPath:(NSString *)keyPath;
+- (void)setValue:(id)value forKeyPath:(NSString *)keyPath;
+
 @end
