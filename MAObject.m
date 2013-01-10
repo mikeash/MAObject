@@ -316,6 +316,7 @@
     }
     
     [NSException raise: NSInternalInconsistencyException format: @"Class %@ is not key-value compliant for key %@", [isa description], key];
+    return nil;
 }
 
 - (void)setValue: (id)value forKey: (NSString *)key
