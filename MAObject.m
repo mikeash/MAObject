@@ -416,10 +416,30 @@
 
 - (id)valueForKeyPath: (NSString *)keyPath
 {
+    NSRange range = [keyPath rangeOfString: @"."];
+    if(range.location == NSNotFound)
+        return [self valueForKey: keyPath];
+    
+    NSString *key = [keyPath substringToIndex: range.location];
+    NSString *rest = [keyPath substringFromIndex: NSMaxRange(range)];
+    
+    id next = [self valueForKey: key];
+    return [next valueForKeyPath: rest];
 }
 
 - (void)setValue: (id)value forKeyPath: (NSString *)keyPath
 {
+    NSRange range = [keyPath rangeOfString: @"."];
+    if(range.location == NSNotFound)
+    {
+        [self setValue: value forKey: keyPath];
+        return;
+    }
+    
+    NSString *key = [keyPath substringToIndex: range.location];
+    NSString *rest = [keyPath substringFromIndex: NSMaxRange(range)];
+    id next = [self valueForKey: key];
+    [next setValue: value forKeyPath: rest];
 }
 
 @end

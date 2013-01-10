@@ -15,6 +15,7 @@
     double d;
     id e;
     long long f;
+    NSMutableDictionary *g;
 }
 
 - (void)dealloc
@@ -79,6 +80,11 @@ int main(int argc, char **argv)
         [obj setValue: @82.8 forKey: @"baz"];
         
         NSLog(@"%@ %@ %@", [obj valueForKey: @"foo"], [obj valueForKey: @"bar"], [obj valueForKey: @"baz"]);
+        
+        [obj setValue: [NSMutableDictionary dictionary] forKeyPath: @"g"];
+        [obj setValue: @2 forKeyPath: @"g.foo"];
+        [obj setValue: @3 forKeyPath: @"g.bar"];
+        NSLog(@"%@ %@ %@ %@", [obj valueForKeyPath: @"g"], [obj valueForKeyPath: @"g.foo"], [obj valueForKeyPath: @"g.bar"], [obj valueForKeyPath: @"g.baz"]);
         
         [obj valueForKey: @"blahblah"];
         
