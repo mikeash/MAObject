@@ -280,6 +280,9 @@
     }
     
     Ivar ivar = class_getInstanceVariable(isa, [key UTF8String]);
+    if(!ivar)
+        ivar = class_getInstanceVariable(isa, [[@"_" stringByAppendingString: key] UTF8String]);
+    
     if(ivar)
     {
         ptrdiff_t offset = ivar_getOffset(ivar);
@@ -365,6 +368,9 @@
     }
     
     Ivar ivar = class_getInstanceVariable(isa, [key UTF8String]);
+    if(!ivar)
+        ivar = class_getInstanceVariable(isa, [[@"_" stringByAppendingString: key] UTF8String]);
+    
     if(ivar)
     {
         ptrdiff_t offset = ivar_getOffset(ivar);

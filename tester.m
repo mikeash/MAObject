@@ -16,6 +16,7 @@
     id e;
     long long f;
     NSMutableDictionary *g;
+    id _h;
 }
 
 - (void)dealloc
@@ -85,6 +86,8 @@ int main(int argc, char **argv)
         [obj setValue: @2 forKeyPath: @"g.foo"];
         [obj setValue: @3 forKeyPath: @"g.bar"];
         NSLog(@"%@ %@ %@ %@", [obj valueForKeyPath: @"g"], [obj valueForKeyPath: @"g.foo"], [obj valueForKeyPath: @"g.bar"], [obj valueForKeyPath: @"g.baz"]);
+        [obj setValue: @"underscore" forKey: @"h"];
+        NSLog(@"%@", [obj valueForKey: @"h"]);
         
         [obj valueForKey: @"blahblah"];
         
