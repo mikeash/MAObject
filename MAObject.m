@@ -376,8 +376,9 @@
         const char *type = ivar_getTypeEncoding(ivar);
         if(type[0] == @encode(id)[0] || type[0] == @encode(Class)[0])
         {
+            value = [value retain];
             [*(id *)ptr release];
-            *(id *)ptr = [value retain];
+            *(id *)ptr = value;
             return;
         }
         else
