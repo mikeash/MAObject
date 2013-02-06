@@ -381,38 +381,35 @@
             *(id *)ptr = value;
             return;
         }
+        else if(strcmp([value objCType], type) == 0)
+        {
+            [value getValue: ptr];
+            return;
+        }
         else
         {
-            if(strcmp([value objCType], type) == 0)
-            {
-                [value getValue: ptr];
-                return;
-            }
-            else
-            {
-                #define CASE(ctype, selectorpart) \
-                    if(strcmp(type, @encode(ctype)) == 0) { \
-                        *(ctype *)ptr = [value selectorpart ## Value]; \
-                        return; \
-                    }
-                
-                CASE(char, char);
-                CASE(unsigned char, unsignedChar);
-                CASE(short, short);
-                CASE(unsigned short, unsignedShort);
-                CASE(int, int);
-                CASE(unsigned int, unsignedInt);
-                CASE(long, long);
-                CASE(unsigned long, unsignedLong);
-                CASE(long long, longLong);
-                CASE(unsigned long long, unsignedLongLong);
-                CASE(float, float);
-                CASE(double, double);
-                
-                #undef CASE
-                
-                [NSException raise: NSInternalInconsistencyException format: @"Class %@ key %@ set from incompatible object %@", [isa description], key, value];
-            }
+            #define CASE(ctype, selectorpart) \
+                if(strcmp(type, @encode(ctype)) == 0) { \
+                    *(ctype *)ptr = [value selectorpart ## Value]; \
+                    return; \
+                }
+            
+            CASE(char, char);
+            CASE(unsigned char, unsignedChar);
+            CASE(short, short);
+            CASE(unsigned short, unsignedShort);
+            CASE(int, int);
+            CASE(unsigned int, unsignedInt);
+            CASE(long, long);
+            CASE(unsigned long, unsignedLong);
+            CASE(long long, longLong);
+            CASE(unsigned long long, unsignedLongLong);
+            CASE(float, float);
+            CASE(double, double);
+            
+            #undef CASE
+            
+            [NSException raise: NSInternalInconsistencyException format: @"Class %@ key %@ set from incompatible object %@", [isa description], key, value];
         }
     }
     
