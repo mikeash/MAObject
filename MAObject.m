@@ -242,9 +242,10 @@
 - (id)valueForKey: (NSString *)key
 {
     SEL getterSEL = NSSelectorFromString(key);
-    Method method = class_getInstanceMethod(isa, getterSEL);
-    if(method)
+    if([self respondsToSelector: getterSEL])
     {
+        Method method = class_getInstanceMethod(isa, getterSEL);
+        
         char type;
         method_getReturnType(method, &type, 1);
         IMP imp = method_getImplementation(method);
@@ -323,9 +324,10 @@
 {
     NSString *setterName = [NSString stringWithFormat: @"set%@:", [key capitalizedString]];
     SEL setterSEL = NSSelectorFromString(setterName);
-    Method method = class_getInstanceMethod(isa, setterSEL);
-    if(method)
+    if([self respondsToSelector: setterSEL])
     {
+        Method method = class_getInstanceMethod(isa, setterSEL);
+        
         char type;
         method_getArgumentType(method, 2, &type, 1);
         IMP imp = method_getImplementation(method);
