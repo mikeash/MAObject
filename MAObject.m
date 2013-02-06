@@ -244,11 +244,9 @@
     SEL getterSEL = NSSelectorFromString(key);
     if([self respondsToSelector: getterSEL])
     {
-        Method method = class_getInstanceMethod(isa, getterSEL);
-        
-        char type;
-        method_getReturnType(method, &type, 1);
-        IMP imp = method_getImplementation(method);
+        NSMethodSignature *sig = [self methodSignatureForSelector: getterSEL];
+        char type = [sig methodReturnType][0];
+        IMP imp = [self methodForSelector: getterSEL];
         
         if(type == @encode(id)[0] || type == @encode(Class)[0])
         {
@@ -275,7 +273,7 @@
             
             #undef CASE
             
-            [NSException raise: NSInternalInconsistencyException format: @"Class %@ key %@ don't know how to interpret method return type from getter, type encoding string is %s", [isa description], key, method_getTypeEncoding(method)];
+            [NSException raise: NSInternalInconsistencyException format: @"Class %@ key %@ don't know how to interpret method return type from getter, signature is %@", [isa description], key, sig];
         }
     }
     
@@ -329,11 +327,9 @@
     SEL setterSEL = NSSelectorFromString(setterName);
     if([self respondsToSelector: setterSEL])
     {
-        Method method = class_getInstanceMethod(isa, setterSEL);
-        
-        char type;
-        method_getArgumentType(method, 2, &type, 1);
-        IMP imp = method_getImplementation(method);
+        NSMethodSignature *sig = [self methodSignatureForSelector: setterSEL];
+        char type = [sig getArgumentTypeAtIndex: 2][0];
+        IMP imp = [self methodForSelector: setterSEL];
         
         if(type == @encode(id)[0] || type == @encode(Class)[0])
         {
