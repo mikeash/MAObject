@@ -1,4 +1,3 @@
-
 #import "MAObject.h"
 
 #import <libkern/OSAtomic.h>
@@ -318,7 +317,7 @@
     }
     
     [NSException raise: NSInternalInconsistencyException format: @"Class %@ is not key-value compliant for key %@", [isa description], key];
-    return nil;
+    __builtin_unreachable();
 }
 
 - (void)setValue: (id)value forKey: (NSString *)key
